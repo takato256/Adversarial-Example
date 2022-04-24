@@ -1,3 +1,4 @@
+from matplotlib import container
 import tensorflow as tf
 import streamlit as st
 from PIL import Image
@@ -31,12 +32,13 @@ def create_adversarial_pattern(input_image, input_label):
   signed_grad = tf.sign(gradient)
   return signed_grad
 
-def display_images(image):
+def display_images(image, num):
   _, label, confidence = get_imagenet_label(pretrained_model.predict(image))
-  b = image[0]*0.5+0.5
-  st.text(label)
-  st.text(confidence)
-  st.image(b.numpy(), caption = 'image', use_column_width= 'auto')
+  image_ad = image[0]*0.5+0.5
+  powerful_list = ['弱', 'やや弱', '中', '強']
+  container_3 = st.container()
+  container_3.image(image_ad.numpy(), caption = 'ノイズ:{}'.format(powerful_list[num]), use_column_width= 'auto')
+  container_3.write("この画像は {} と認識されています。正解率は {:.2f}% です。".format(label, confidence*100))
     
 uploaded_file = st.file_uploader("ここに画像ファイルをアップロードしてください(png, jpg, jpeg)", type=['png', 'jpg', 'jpeg'])
 if uploaded_file != None:
@@ -56,7 +58,7 @@ if uploaded_file != None:
     a = image[0]*0.5+0.5
     container_1 = st.container()
     container_1.image(a.numpy(), caption = 'オリジナル画像', use_column_width= 'auto',clamp=True)
-    container_1.write("この画像は{}と認識されています。正解率は{:.3f}%です。".format(image_class, class_confidence*100))
+    container_1.write("この画像は {} と認識されています。正解率は {:.2f}% です。".format(image_class, class_confidence*100))
     st.write('\n')
 
     labrador_retriever_index = 208
@@ -76,5 +78,5 @@ if uploaded_file != None:
     for i, eps in enumerate(epsilons):
       adv_x = image + eps*perturbations
       adv_x = tf.clip_by_value(adv_x, -1, 1)
-      display_images(adv_x)
+      display_images(adv_x, i)
       st.write('\n')
