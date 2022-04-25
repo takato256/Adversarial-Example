@@ -1,0 +1,4 @@
+tensorflow
+streamlit
+PIL
+tensorflow.keras.applications.resnet_v2
