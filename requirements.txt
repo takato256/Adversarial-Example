@@ -1,3 +1,2 @@
 tensorflow
 streamlit
-tensorflow.keras.applications.resnet_v2
