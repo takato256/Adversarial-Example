@@ -1,4 +1,3 @@
-from matplotlib import container
 import tensorflow as tf
 import streamlit as st
 from PIL import Image
@@ -32,7 +31,7 @@ def create_adversarial_pattern(input_image, input_label):
   signed_grad = tf.sign(gradient)
   return signed_grad
 
-def display_images(image, num):
+def show_images(image, num):
   _, label, confidence = get_imagenet_label(pretrained_model.predict(image))
   image_ad = image[0]*0.5+0.5
   powerful_list = ['弱', 'やや弱', '中', '強']
@@ -55,9 +54,9 @@ if uploaded_file != None:
     _, image_class, class_confidence = get_imagenet_label(image_probs)
     
     # オリジナル画像を表示
-    a = image[0]*0.5+0.5
+    image_a = image[0]*0.5+0.5
     container_1 = st.container()
-    container_1.image(a.numpy(), caption = 'オリジナル画像', use_column_width= 'auto',clamp=True)
+    container_1.image(image_a.numpy(), caption = 'オリジナル画像', use_column_width= 'auto',clamp=True)
     container_1.write("この画像は {} と認識されています。正解率は {:.2f}% です。".format(image_class, class_confidence*100))
     st.write('\n')
 
@@ -67,9 +66,9 @@ if uploaded_file != None:
 
     # ノイズ画像を表示
     perturbations = create_adversarial_pattern(image, label)
-    c = perturbations[0]*0.5+0.5
+    image_b = perturbations[0]*0.5+0.5
     container_2 = st.container()
-    container_2.image(c.numpy(), caption = 'ノイズ', use_column_width= 'auto')
+    container_2.image(image_b.numpy(), caption = 'ノイズ', use_column_width= 'auto')
     container_2.write("この画像はノイズです。これをオリジナル画像に加えます。")
     
     # 敵対的サンプルを表示
@@ -78,5 +77,5 @@ if uploaded_file != None:
     for i, eps in enumerate(epsilons):
       adv_x = image + eps*perturbations
       adv_x = tf.clip_by_value(adv_x, -1, 1)
-      display_images(adv_x, i)
+      show_images(adv_x, i)
       st.write('\n')
