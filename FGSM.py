@@ -40,6 +40,10 @@ def show_images(image, num):
   container_3.write("この画像は {} と認識されています。正解率は {:.2f}% です。".format(label, confidence*100))
     
 uploaded_file = st.file_uploader("ここに画像ファイルをアップロードしてください(png, jpg, jpeg)", type=['png', 'jpg', 'jpeg'])
+st.write('インデックス値を変化させることによって、画像に適したノイズを作ることができます。')
+st.write('値を変化させて、誤分類を起こさせよう。')
+indices = st.number_input(label="画像のインデックス値を選択してください", value=500)
+
 if uploaded_file != None:
 
     # オリジナル画像の下準備
@@ -60,8 +64,7 @@ if uploaded_file != None:
     container_1.write("この画像は {} と認識されています。正解率は {:.2f}% です。".format(image_class, class_confidence*100))
     st.write('\n')
 
-    labrador_retriever_index = 208
-    label = tf.one_hot(labrador_retriever_index, image_probs.shape[-1])
+    label = tf.one_hot(indices, image_probs.shape[-1])
     label = tf.reshape(label, (1, image_probs.shape[-1]))
 
     # ノイズ画像を表示
